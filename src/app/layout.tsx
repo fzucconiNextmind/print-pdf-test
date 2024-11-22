@@ -24,7 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning={true} lang="en">
+      <head>
+        <title>Highchart Pdf Generator Demo</title>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
