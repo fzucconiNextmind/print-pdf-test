@@ -15,7 +15,10 @@ const LineChartComponent = (props: HighchartsReact.Props) => {
       },
     ],
   };
-  const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
+  const chartComponentRef = useRef<{
+    chart: Highcharts.Chart;
+    container: React.RefObject<HTMLDivElement>;
+  }>(null);
 
   return (
     <HighchartsReact

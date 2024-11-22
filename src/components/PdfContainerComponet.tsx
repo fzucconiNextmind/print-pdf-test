@@ -1,6 +1,5 @@
 "use client";
 import { usePDF } from "react-to-pdf";
-
 import React, { ReactNode } from "react";
 import GeneratePdfButton from "./GeneratePdfButton";
 
