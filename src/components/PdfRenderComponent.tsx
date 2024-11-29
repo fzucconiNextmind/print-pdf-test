@@ -8,45 +8,33 @@ import {
   Document,
   Image,
   Page,
+  PDFDownloadLink,
   PDFViewer,
   StyleSheet,
   Text,
   View,
 } from "@react-pdf/renderer";
 import { svgToDataURI } from "@/helpers/svgHelper";
+import { barOptions, lineOptions, options } from "@/utils/chartsOptions";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 
-const options: Highcharts.Options = {
-  title: {
-    text: "Pie chart",
-  },
-  plotOptions: {
-    series: {
-      shadow: true,
-    },
-  },
-  series: [
-    {
-      type: "pie",
-      data: [1, 2, 3],
-    },
-  ],
-};
-const lineOptions: Highcharts.Options = {
-  title: {
-    text: "Line chart",
-  },
-  plotOptions: {
-    series: {
-      shadow: true,
-    },
-  },
-  series: [
-    {
-      type: "line",
-      data: [1, 2, 3],
-    },
-  ],
-};
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const styles = StyleSheet.create({
   body: {
@@ -62,7 +50,15 @@ const styles = StyleSheet.create({
 
   image: {
     marginVertical: 15,
-    marginHorizontal: 100,
+    paddingHorizontal: 5,
+    width: "50%",
+  },
+
+  view: {
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    flexWrap: "wrap",
   },
 });
 
@@ -71,8 +67,10 @@ interface Props {
 }
 
 const PdfRenderComponent = ({ isPreview }: Props) => {
-  exporting(Highcharts);
-  exportData(Highcharts);
+  if (typeof Highcharts === "object") {
+    exporting(Highcharts);
+    exportData(Highcharts);
+  }
   const pieChartComponentRef = useRef<{
     chart: Highcharts.Chart;
     container: React.RefObject<HTMLDivElement>;
@@ -81,20 +79,71 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
     chart: Highcharts.Chart;
     container: React.RefObject<HTMLDivElement>;
   }>(null);
-  const [svg, setSvg] = useState<any[]>([]);
+  const barChartComponentRef = useRef<{
+    chart: Highcharts.Chart;
+    container: React.RefObject<HTMLDivElement>;
+  }>(null);
+
+  const chartJSRef = useRef<any>();
+  const [svgList, setSvgList] = useState<any[]>([]);
+
+  const data = {
+    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    datasets: [
+      {
+        label: "# of Votes",
+        data: [-12, -19, 3, 5, 2, 3],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
 
   useEffect(() => {
-    if (!!pieChartComponentRef?.current && !!lineChartComponentRef?.current) {
+    if (
+      !!pieChartComponentRef?.current &&
+      !!barChartComponentRef?.current &&
+      !!lineChartComponentRef?.current &&
+      !!chartJSRef?.current
+    ) {
       const pieStringSvg = pieChartComponentRef?.current?.chart.getSVG();
       const lineStringSvg = lineChartComponentRef?.current?.chart.getSVG();
-      const width = pieChartComponentRef?.current?.chart?.chartWidth ?? 0;
-      const height = pieChartComponentRef?.current?.chart?.chartHeight ?? 0;
+      const barStringSvg = barChartComponentRef?.current?.chart.getSVG();
 
       Promise.all([
-        svgToDataURI(pieStringSvg, width, height),
-        svgToDataURI(lineStringSvg, width, height),
+        svgToDataURI(
+          pieStringSvg,
+          pieChartComponentRef?.current?.chart?.chartWidth,
+          pieChartComponentRef?.current?.chart?.chartHeight
+        ),
+        svgToDataURI(
+          lineStringSvg,
+          lineChartComponentRef?.current?.chart?.chartWidth,
+          lineChartComponentRef?.current?.chart?.chartHeight
+        ),
+        svgToDataURI(
+          barStringSvg,
+          barChartComponentRef?.current?.chart?.chartWidth,
+          barChartComponentRef?.current?.chart?.chartHeight
+        ),
       ]).then((res: any) => {
-        setSvg(res);
+        const chartjsSvg = chartJSRef.current?.toBase64Image();
+        setSvgList([...res, chartjsSvg]);
       });
     }
   }, [pieChartComponentRef, lineChartComponentRef]);
@@ -106,9 +155,11 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
         <Page style={styles.body}>
           <View>
             <Text style={styles.title}> This is a Pdf sample </Text>
-            {svg.map((chart, id) => {
-              return <Image style={styles.image} key={id} src={chart} />;
-            })}
+            <View style={styles.view}>
+              {svgList.map((chart, id) => {
+                return <Image style={styles.image} key={id} src={chart} />;
+              })}
+            </View>
           </View>
         </Page>
       </Document>
@@ -116,7 +167,7 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
   };
 
   return !isPreview ? (
-    <div className="flex gap-3 min-h-96 justify-between">
+    <div className="grid md:grid-cols-2 grid-cols-1  gap-4">
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
@@ -126,12 +177,47 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
         highcharts={Highcharts}
         options={lineOptions}
         ref={lineChartComponentRef}
-      />{" "}
+      />
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={barOptions}
+        ref={barChartComponentRef}
+      />
+      <div className="bg-white">
+        <Bar
+          ref={chartJSRef}
+          options={{
+            indexAxis: "y",
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+              x: {
+                min: -30,
+                max: 30,
+              },
+            },
+          }}
+          data={data}
+        />
+      </div>
     </div>
   ) : (
-    <PDFViewer className="h-[500px] w-full">
-      <ChartsDocument />
-    </PDFViewer>
+    <>
+      <PDFDownloadLink
+        className="w-fit p-3 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white rounded-md"
+        target="_blank"
+        download={false}
+        document={<ChartsDocument />}
+      >
+        Download
+      </PDFDownloadLink>
+      <div className="h-screen">
+        <PDFViewer width={"100%"} height={"100%"}>
+          <ChartsDocument />
+        </PDFViewer>
+      </div>
+    </>
   );
 };
 
