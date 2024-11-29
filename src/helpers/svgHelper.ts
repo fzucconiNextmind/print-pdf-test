@@ -10,10 +10,11 @@ export function svgToDataURI(
   renderWidth: number,
   renderHeight: number
 ) {
-  const id = "canvas-id";
+  const id = `canvas-id-${Math.random()}`;
   const canvas = document.createElement("canvas");
   canvas.setAttribute("id", id);
   canvas.setAttribute("style", "display: none");
+
   document.body.appendChild(canvas);
 
   canvas.width = renderWidth;
@@ -29,7 +30,7 @@ export function svgToDataURI(
 
   return new Promise((res) => {
     img.onload = function load() {
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, renderWidth, renderHeight);
       const url = canvas.toDataURL("image/jpeg", 1.0);
       const el = document.getElementById(id);
       if (el) el.remove();
