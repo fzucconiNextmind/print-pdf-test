@@ -127,6 +127,10 @@ const PdfRenderJsPdf = ({ isPreview }: Props) => {
     }
   }, [pieChartComponentRef, lineChartComponentRef]);
 
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+  };
+
   return !isPreview ? (
     <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
       <HighchartsReact
@@ -167,8 +171,14 @@ const PdfRenderJsPdf = ({ isPreview }: Props) => {
     <div className="w-full flex justify-center">
       <BlobProvider document={<ChartsDocument svgList={svgList} />}>
         {({ blob, url, loading, error }) => (
-          <Document className="w-[500px]" file={url}>
-            <Page pageNumber={1} width={500} />
+          <Document file={url} onLoadSuccess={onDocumentLoadSuccess}>
+            {[...Array(numPages)].map((_, index) => (
+              <Page
+                key={index}
+                pageNumber={index + 1}
+                className="bg-white max-w-[800px] mx-auto shadow-lg rounded-lg transform scale-90 origin-top border border-gray-200 min-h-[1123px] w-full aspect-[1/1.4142] "
+              />
+            ))}
           </Document>
         )}
       </BlobProvider>
