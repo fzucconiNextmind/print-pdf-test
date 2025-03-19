@@ -7,15 +7,52 @@ export const options: Highcharts.Options = {
   title: {
     text: "Pie chart",
   },
+  tooltip: {
+    enabled: false,
+  },
+  exporting: {
+    enabled: false,
+  },
   plotOptions: {
     series: {
-      shadow: true,
+      shadow: false,
+      states: {
+        hover: {
+          animation: false,
+          enabled: false,
+        },
+        inactive: {
+          animation: false,
+          enabled: false,
+        },
+        normal: {
+          animation: false,
+        },
+        select: {
+          animation: false,
+          enabled: false,
+        },
+      },
+      marker: {
+        states: {
+          hover: {
+            animation: false,
+            enabled: false,
+          },
+        },
+      },
     },
   },
   series: [
     {
       type: "pie",
       data: [1, 2, 3],
+      animation: false,
+      events: {
+        legendItemClick: undefined,
+        mouseOver: undefined,
+        mouseOut: undefined,
+      },
     },
   ],
 };
@@ -26,15 +63,35 @@ export const lineOptions: Highcharts.Options = {
   title: {
     text: "Line chart",
   },
+  tooltip: {
+    enabled: false,
+  },
+  exporting: {
+    enabled: false,
+  },
   plotOptions: {
     series: {
-      shadow: true,
+      shadow: false,
     },
   },
   series: [
     {
       type: "line",
+      marker: {
+        states: {
+          hover: {
+            animation: false,
+            enabled: false,
+          },
+        },
+      },
       data: [1, 2, 3],
+      animation: false,
+      events: {
+        legendItemClick: undefined,
+        mouseOver: undefined,
+        mouseOut: undefined,
+      },
     },
   ],
 };
@@ -81,6 +138,9 @@ export const barOptions: Highcharts.Options = {
       valueDescriptionFormat: "{index}. Age {xDescription}, {value}%.",
     },
   },
+  tooltip: {
+    enabled: false,
+  },
   xAxis: [
     {
       categories: categories,
@@ -122,9 +182,33 @@ export const barOptions: Highcharts.Options = {
   plotOptions: {
     series: {
       stacking: "normal",
+      events: {
+        legendItemClick: undefined,
+        mouseOver: undefined,
+        mouseOut: undefined,
+      },
+      states: {
+        hover: {
+          animation: false,
+          enabled: false,
+        },
+        inactive: {
+          animation: false,
+          enabled: false,
+        },
+        normal: {
+          animation: false,
+        },
+        select: {
+          animation: false,
+          enabled: false,
+        },
+      },
     },
   },
-
+  exporting: {
+    enabled: false,
+  },
   series: [
     {
       type: "bar",

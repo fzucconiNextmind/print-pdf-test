@@ -87,9 +87,9 @@ export default function JsPdf() {
 
     const options = {
       filename: `${title}.pdf`,
-      margin: 3,
+      margin: 0,
       html2canvas: {
-        windowWidth: 1000,
+        windowWidth: 1024,
       },
     };
 
@@ -114,8 +114,11 @@ export default function JsPdf() {
           </button>
         </div>
 
-        <div ref={pdfRef} className="bg-white">
-          <div className="p-4 text-center">
+        <div
+          ref={pdfRef}
+          className="bg-white max-w-[800px] mx-auto shadow-lg rounded-lg transform scale-90 origin-top border border-gray-200 min-h-[1123px] w-full aspect-[1/1.4142] "
+        >
+          <div className="p-8 text-center">
             <h1 className="text-2xl font-bold mb-4">Chart Analysis Report</h1>
             <p className="text-gray-700 mb-6">
               This report presents a comprehensive visualization of data using
@@ -124,29 +127,37 @@ export default function JsPdf() {
               underlying data patterns and trends.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
+          <div className="grid grid-cols-2  gap-8 p-8 ">
             {svgList.map((svg, index) => (
-              <img className="aspect-square" key={index} src={svg} alt="svg" />
+              <div className="w-full h-auto aspect-square object-contain">
+                <img
+                  className="w-full h-full"
+                  key={index}
+                  src={svg}
+                  alt="svg"
+                />
+              </div>
             ))}
           </div>
         </div>
-
         <div className="hidden">
-          <HighchartsReact
-            ref={pieChartComponentRef}
-            highcharts={Highcharts}
-            options={options}
-          />
-          <HighchartsReact
-            ref={lineChartComponentRef}
-            highcharts={Highcharts}
-            options={lineOptions}
-          />
-          <HighchartsReact
-            ref={barChartComponentRef}
-            highcharts={Highcharts}
-            options={barOptions}
-          />
+          <div className="grid grid-cols-2  gap-8 p-8 bg-white max-w-[800px] mx-auto shadow-lg rounded-lg transform scale-90 origin-top border border-gray-200 min-h-[1123px] w-full aspect-[1/1.4142]">
+            <HighchartsReact
+              ref={pieChartComponentRef}
+              highcharts={Highcharts}
+              options={options}
+            />
+            <HighchartsReact
+              ref={lineChartComponentRef}
+              highcharts={Highcharts}
+              options={lineOptions}
+            />
+            <HighchartsReact
+              ref={barChartComponentRef}
+              highcharts={Highcharts}
+              options={barOptions}
+            />
+          </div>
         </div>
       </div>
     </div>
