@@ -1,15 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import PdfRenderComponent from "@/components/PdfRenderComponent";
+import PdfRenderJsPdf from "@/components/PdfRenderJsPdf";
 import Link from "next/link";
 
-export default function PdfRender() {
+export default function JsPdf() {
   const [isPreview, setIsPreview] = useState(false);
+
   return (
     <div className="sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <div className="flex flex-col gap-8">
         <h3 className="text-2xl font-bolt self-center">
-          Highcharts Pdf Generator Demo with: @react-pdf/renderer
+          Highcharts Pdf Generator Demo with: jsPDF
         </h3>
         <div className="flex justify-between">
           <Link className="self-start" href={"/"}>
@@ -22,7 +23,7 @@ export default function PdfRender() {
             {isPreview ? "Back" : "Generate Pdf"}
           </button>
         </div>
-        <PdfRenderComponent isPreview={isPreview} />
+        <PdfRenderJsPdf isPreview={isPreview} />
       </div>
     </div>
   );

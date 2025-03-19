@@ -1,7 +1,3 @@
-import GeneratePdfButton from "@/components/GeneratePdfButton";
-import LineChartComponent from "@/components/LineChartComponent";
-import PdfContainerComponet from "@/components/PdfContainerComponet";
-import PieChartComponet from "@/components/PieChartComponent";
 import Link from "next/link";
 
 export default function Home() {
@@ -11,13 +7,18 @@ export default function Home() {
         <h3 className="text-2xl font-bolt self-center">
           Highcharts Pdf Generator Demo with: @react-to-pdf
         </h3>
-        <Link className="self-start" href={"/pdf-render"}>
-          try with react-pdf/render
+        <Link className="self-start" href={"/react-to-pdf"}>
+          try with @react-to-pdf
         </Link>
-        <PdfContainerComponet>
-          <LineChartComponent />
-          <PieChartComponet />
-        </PdfContainerComponet>
+        <Link className="self-start" href={"/pdf-render"}>
+          try with @react-pdf/render
+        </Link>
+        <Link className="self-start" href={"/jsPdf"}>
+          try with @react-pdf/render and preview by react-pdf
+        </Link>
+        <Link className="self-start" href={"/html2pdf"}>
+          try with html2pdf.js
+        </Link>
       </main>
     </div>
   );

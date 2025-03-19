@@ -4,17 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import * as Highcharts from "highcharts";
 import exporting from "highcharts/modules/exporting.js";
 import exportData from "highcharts/modules/export-data.js";
-import {
-  BlobProvider,
-  Document,
-  Image,
-  Page,
-  PDFDownloadLink,
-  PDFViewer,
-  StyleSheet,
-  Text,
-  View,
-} from "@react-pdf/renderer";
+import { Document, Page, pdfjs } from "react-pdf";
 import { svgToDataURI } from "@/helpers/svgHelper";
 import { barOptions, lineOptions, options } from "@/utils/chartsOptions";
 import {
@@ -27,6 +17,10 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import ChartsDocument from "./ChartsDocument";
+import { BlobProvider } from "@react-pdf/renderer";
+import "react-pdf/dist/Page/TextLayer.css";
+import "react-pdf/dist/Page/AnnotationLayer.css";
 
 ChartJS.register(
   CategoryScale,
@@ -37,38 +31,18 @@ ChartJS.register(
   Legend
 );
 
-const styles = StyleSheet.create({
-  body: {
-    paddingTop: 35,
-    paddingBottom: 65,
-    paddingHorizontal: 35,
-  },
-  title: {
-    fontSize: 24,
-    textAlign: "center",
-    marginBottom: 16,
-  },
-
-  image: {
-    marginVertical: 15,
-    paddingHorizontal: 5,
-    width: "50%",
-    aspectRatio: 1,
-  },
-
-  view: {
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    flexWrap: "wrap",
-  },
-});
-
 interface Props {
   isPreview: boolean;
 }
 
-const PdfRenderComponent = ({ isPreview }: Props) => {
+const PdfRenderJsPdf = ({ isPreview }: Props) => {
+  useEffect(() => {
+    // Initialize PDF.js worker only on client side
+    if (typeof window !== "undefined") {
+      pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+    }
+  }, []);
+
   if (typeof Highcharts === "object") {
     exporting(Highcharts);
     exportData(Highcharts);
@@ -88,6 +62,9 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
 
   const chartJSRef = useRef<any>();
   const [svgList, setSvgList] = useState<any[]>([]);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const chartsContainerRef = useRef<HTMLDivElement>(null);
 
   const data = {
     labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
@@ -150,26 +127,8 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
     }
   }, [pieChartComponentRef, lineChartComponentRef]);
 
-  const ChartsDocument = () => {
-    // Use DOMParser to parse new svg element from svgString
-    return (
-      <Document>
-        <Page style={styles.body}>
-          <View>
-            <Text style={styles.title}> This is a Pdf sample </Text>
-            <View style={styles.view}>
-              {svgList.map((chart, id) => {
-                return <Image style={styles.image} key={id} src={chart} />;
-              })}
-            </View>
-          </View>
-        </Page>
-      </Document>
-    );
-  };
-
   return !isPreview ? (
-    <div className="grid md:grid-cols-2 grid-cols-1  gap-4">
+    <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
@@ -205,48 +164,16 @@ const PdfRenderComponent = ({ isPreview }: Props) => {
       </div>
     </div>
   ) : (
-    <>
-      <div className="flex flex-col gap-4">
-        <BlobProvider document={<ChartsDocument />}>
-          {({ blob, url }) => (
-            <div className="flex flex-col gap-4">
-              <a
-                href={url || ""}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-fit p-3 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white rounded-md"
-              >
-                Download PDF
-              </a>
-
-              <div className="block md:hidden bg-white p-4 rounded-lg shadow">
-                <h2 className="text-2xl font-bold text-center mb-4">
-                  PDF Preview
-                </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {svgList.map((chart, id) => (
-                    <div key={id} className="w-full">
-                      <img
-                        src={chart}
-                        alt={`Chart ${id + 1}`}
-                        className="w-full aspect-square"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </BlobProvider>
-        {/* Desktop PDF Viewer */}
-        <div className="hidden md:block w-full min-h-[500px] md:h-screen">
-          <PDFViewer width="100%" height="100%">
-            <ChartsDocument />
-          </PDFViewer>
-        </div>
-      </div>
-    </>
+    <div className="w-full flex justify-center">
+      <BlobProvider document={<ChartsDocument svgList={svgList} />}>
+        {({ blob, url, loading, error }) => (
+          <Document className="w-[500px]" file={url}>
+            <Page pageNumber={1} width={500} />
+          </Document>
+        )}
+      </BlobProvider>
+    </div>
   );
 };
 
-export default PdfRenderComponent;
+export default PdfRenderJsPdf;
