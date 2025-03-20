@@ -17,7 +17,7 @@ export default function Home() {
           try with @react-pdf/render and preview by react-pdf
         </Link>
         <Link className="self-start" href={"/html2pdf"}>
-          try with html2pdf.js
+          try with @html2pdf.js
         </Link>
       </main>
     </div>
