@@ -3,9 +3,11 @@ import * as Highcharts from "highcharts";
 export const options: Highcharts.Options = {
   chart: {
     height: 500,
+    margin: [0, 0, 0, 0],
+    spacing: [0, 0, 0, 0],
   },
   title: {
-    text: "Pie chart",
+    text: undefined,
   },
   tooltip: {
     enabled: false,
@@ -14,6 +16,12 @@ export const options: Highcharts.Options = {
     enabled: false,
   },
   plotOptions: {
+    pie: {
+      dataLabels: {
+        enabled: true,
+        distance: -50,
+      },
+    },
     series: {
       shadow: false,
       states: {
@@ -59,9 +67,11 @@ export const options: Highcharts.Options = {
 export const lineOptions: Highcharts.Options = {
   chart: {
     height: 500,
+    margin: [0, 0, 0, 0],
+    spacing: [0, 0, 0, 0],
   },
   title: {
-    text: "Line chart",
+    text: undefined,
   },
   tooltip: {
     enabled: false,
@@ -119,20 +129,14 @@ const categories = [
 
 export const barOptions: Highcharts.Options = {
   chart: {
-    //type: "bar",
     height: 500,
+    margin: [0, 0, 80, 0],
+    // spacing: [0, 0, 0, 0],
   },
   title: {
-    text: "Population pyramid for Andorra, 2023",
-    align: "left",
+    text: undefined,
   },
-  subtitle: {
-    text:
-      "Source: <a " +
-      'href="https://countryeconomy.com/demography/population-structure/andorra"' +
-      'target="_blank">countryeconomy.com</a>',
-    align: "left",
-  },
+  subtitle: {},
   accessibility: {
     point: {
       valueDescriptionFormat: "{index}. Age {xDescription}, {value}%.",

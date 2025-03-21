@@ -31,7 +31,7 @@ export function svgToDataURI(
   return new Promise((res) => {
     img.onload = function load() {
       ctx.drawImage(img, 0, 0, renderWidth, renderHeight);
-      const url = canvas.toDataURL("image/jpeg", 1.0);
+      const url = canvas.toDataURL("image/jpeg", 2.0);
       const el = document.getElementById(id);
       if (el) el.remove();
 
