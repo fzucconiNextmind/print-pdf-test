@@ -1,9 +1,8 @@
 "use client";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import * as Highcharts from "highcharts";
 import Link from "next/link";
-//import html2pdf from "html2pdf.js";
 import { barOptions, lineOptions, options } from "@/utils/chartsOptions";
 
 import {

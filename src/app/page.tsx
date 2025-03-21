@@ -13,11 +13,11 @@ export default function Home() {
         <Link className="self-start" href={"/pdf-render"}>
           try with @react-pdf/render
         </Link>
-        <Link className="self-start" href={"/jsPdf"}>
-          try with @react-pdf/render and preview by react-pdf
-        </Link>
         <Link className="self-start" href={"/html2pdf"}>
           try with @html2pdf.js
+        </Link>
+        <Link className="self-start" href={"/jsPdf"}>
+          try with jsPDF and html2canvas
         </Link>
       </main>
     </div>
