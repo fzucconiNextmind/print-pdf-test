@@ -2,7 +2,6 @@ import * as Highcharts from "highcharts";
 
 export const options: Highcharts.Options = {
   chart: {
-    height: 500,
     margin: [0, 0, 0, 0],
     spacing: [0, 0, 0, 0],
   },
@@ -66,7 +65,6 @@ export const options: Highcharts.Options = {
 };
 export const lineOptions: Highcharts.Options = {
   chart: {
-    height: 500,
     margin: [0, 0, 0, 0],
     spacing: [0, 0, 0, 0],
   },
@@ -129,7 +127,6 @@ const categories = [
 
 export const barOptions: Highcharts.Options = {
   chart: {
-    height: 500,
     margin: [0, 0, 80, 0],
     // spacing: [0, 0, 0, 0],
   },

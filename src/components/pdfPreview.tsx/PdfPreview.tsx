@@ -76,39 +76,34 @@ const PdfPreview = ({ generatePdfHandler }: PdfPreviewProps) => {
                 </p>
               </div>
 
-              <div
-                id="report-grafici"
-                className="grid grid-cols-2 p-8 items-start"
-              >
-                {svgList.map((svg, index) => (
-                  <div
-                    key={index}
-                    className="svg-container"
-                    dangerouslySetInnerHTML={{
-                      __html: svg,
-                    }}
-                  />
-                ))}
+              <div id="report-grafici" className="grid grid-cols-2 px-6">
+                <HighchartsReact
+                  ref={pieChartComponentRef}
+                  highcharts={Highcharts}
+                  options={options}
+                  containerProps={{
+                    className: "w-full",
+                    style: {},
+                  }}
+                />
+                <HighchartsReact
+                  ref={lineChartComponentRef}
+                  highcharts={Highcharts}
+                  options={lineOptions}
+                  containerProps={{
+                    className: "w-full ",
+                  }}
+                />
+                <HighchartsReact
+                  ref={barChartComponentRef}
+                  highcharts={Highcharts}
+                  options={barOptions}
+                  containerProps={{
+                    className: "w-full ",
+                  }}
+                />
               </div>
             </div>
-          </div>
-
-          <div className="hidden">
-            <HighchartsReact
-              ref={pieChartComponentRef}
-              highcharts={Highcharts}
-              options={options}
-            />
-            <HighchartsReact
-              ref={lineChartComponentRef}
-              highcharts={Highcharts}
-              options={lineOptions}
-            />
-            <HighchartsReact
-              ref={barChartComponentRef}
-              highcharts={Highcharts}
-              options={barOptions}
-            />
           </div>
         </div>
       </div>

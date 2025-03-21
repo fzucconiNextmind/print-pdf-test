@@ -65,13 +65,23 @@ const JsPdfHtml2Canvas = () => {
   const generatePdfHandler = async (pdfTitle: string) => {
     // **AGGIUNGI LE SEZIONI**
 
+    const charts = document.getElementsByClassName("highcharts-container");
+    Array.from(charts).forEach((chart) => {
+      chart.removeAttribute("style");
+    });
+    /* 
+    doc.html(document.getElementById("introduzione") as HTMLElement, {
+      callback: function (doc) {},
+      x: 10,
+      y: 10,
+    }); */
+
     doc.setFontSize(10);
     doc.setTextColor("#D3D3D3");
     await addSection("Introduzione", "#introduzione");
     await addSection("Report Grafici", "#report-grafici");
     // Then insert index at the beginning
     await generatePdfIndex();
-
     // **4. SALVA IL PDF**
     doc.save(`${pdfTitle}.pdf`);
     // **5. RIPRISTINA IL CONTATORE DELLE PAGINE E L'ARRAY PER L'INDICE**
