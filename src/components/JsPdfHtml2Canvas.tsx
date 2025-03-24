@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import PdfPreview from "./pdfPreview.tsx/PdfPreview";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import "svg2pdf.js";
 
 const JsPdfHtml2Canvas = () => {
   const [doc, setDoc] = useState<jsPDF>(
@@ -73,11 +74,22 @@ const JsPdfHtml2Canvas = () => {
 
     doc?.html(element, {
       callback: async function (pdf) {
+        // await addSection("report-grafici", "#report-grafici");
+        const highchartsSvgs = document.querySelectorAll(
+          'svg[class^="highcharts"]'
+        );
+        const highchartsSvgsArray = Array.from(highchartsSvgs);
+        doc?.addPage();
+        await doc?.svg(highchartsSvgsArray[0], {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+        });
         const charts = document.getElementsByClassName("highcharts-container");
         Array.from(charts).forEach((chart) => {
           chart.removeAttribute("style");
         });
-        // await addSection("report-grafici", "#report-grafici");
         window.open(doc?.output("bloburl"));
       },
       x: 0,
@@ -126,22 +138,12 @@ const JsPdfHtml2Canvas = () => {
     // **AGGIUNGI LE SEZIONI**
 
     await addHtmlContent("introduzione");
-    /*    const highchartsSvgs = document.querySelectorAll(
-      'svg[class^="highcharts"]'
-    );
-    const highchartsSvgsArray = Array.from(highchartsSvgs);
-
-    const svgString = highchartsSvgsArray.map((svgElement) => {
-      return new XMLSerializer().serializeToString(svgElement);
-    });
-
-    doc?.addSvgAsImage(svgString[0], 0, 0, 200, 200); */
 
     //await generatePdfIndex();
     // **4. SALVA IL PDF**
 
     //doc.save(`${pdfTitle}.pdf`);
-    window.open(doc?.output("bloburl"));
+
     setTocEntries([]);
     setDoc(
       new jsPDF({
