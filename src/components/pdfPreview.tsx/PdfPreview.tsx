@@ -7,6 +7,7 @@ import exportData from "highcharts/modules/export-data";
 import { barOptions } from "@/utils/chartsOptions";
 import { lineOptions } from "@/utils/chartsOptions";
 import { options } from "@/utils/chartsOptions";
+import { svgToDataURI } from "@/helpers/svgHelper";
 
 interface PdfPreviewProps {
   generatePdfHandler: (pdfTitle: string) => void;
@@ -42,7 +43,25 @@ const PdfPreview = ({ generatePdfHandler }: PdfPreviewProps) => {
       const lineStringSvg = lineChartComponentRef?.current?.chart.getSVG();
       const barStringSvg = barChartComponentRef?.current?.chart.getSVG();
 
-      setSvgList([pieStringSvg, lineStringSvg, barStringSvg]);
+      Promise.all([
+        svgToDataURI(
+          pieStringSvg,
+          pieChartComponentRef?.current?.container?.current?.offsetWidth!,
+          pieChartComponentRef?.current?.container?.current?.offsetHeight!
+        ),
+        svgToDataURI(
+          lineStringSvg,
+          lineChartComponentRef?.current?.container?.current?.offsetWidth!,
+          lineChartComponentRef?.current?.container?.current?.offsetHeight!
+        ),
+        svgToDataURI(
+          barStringSvg,
+          barChartComponentRef?.current?.container?.current?.offsetWidth!,
+          barChartComponentRef?.current?.container?.current?.offsetHeight!
+        ),
+      ]).then((res: any) => {
+        setSvgList([...res]);
+      });
     }
   }, [pieChartComponentRef, lineChartComponentRef]);
   return (
@@ -64,26 +83,165 @@ const PdfPreview = ({ generatePdfHandler }: PdfPreviewProps) => {
             <div>
               <div
                 id="introduzione"
-                className="p-8 text-center whitespace-pre-wrap tracking-tight"
+                className="p-8 text-center whitespace-pre-wrap tracking-tight pdf-type-html"
               >
                 <h1 className="text-2xl font-bold mb-4">
                   Chart Analysis Report
                 </h1>
                 <p className="text-gray-700 mb-6">
-                  {
-                    "This report presents a comprehensive visualization of data using various chart types including pie charts, line charts, and bar charts. Each visualization offers unique insights into the underlying data patterns and trends."
-                  }
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
+                  This report presents a comprehensive visualization of data
+                  using various chart types including pie charts, line charts,
+                  and bar charts. Each visualization offers unique insights into
+                  the underlying data patterns and trends. This report presents
+                  a comprehensive visualization of data using various chart
+                  types including pie charts, line charts, and bar charts. Each
+                  visualization offers unique insights into the underlying data
+                  patterns and trends. This report presents a comprehensive
+                  visualization of data using various chart types including pie
+                  charts, line charts, and bar charts. Each visualization offers
+                  unique insights into the underlying data patterns and trends.
                 </p>
               </div>
 
-              <div id="report-grafici" className="grid grid-cols-2 px-6">
+              {/*   <div  className="grid grid-cols-2 ">
+                {svgList.map((chart, id) => (
+                  <div key={id} className="w-full">
+                    <img src={chart} alt={`Chart ${id + 1}`} className="" />
+                  </div>
+                ))}
+              </div> */}
+
+              <div
+                id="report-grafici "
+                className="grid grid-cols-2 px-6 pdf-type-image"
+              >
                 <HighchartsReact
                   ref={pieChartComponentRef}
                   highcharts={Highcharts}
                   options={options}
                   containerProps={{
                     className: "w-full",
-                    style: {},
                   }}
                 />
                 <HighchartsReact
