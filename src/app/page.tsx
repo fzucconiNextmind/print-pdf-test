@@ -18,6 +18,9 @@ export default function Home() {
         <Link className="self-start" href={"/jsPdf"}>
           try with jsPDF and html2canvas
         </Link>
+        <Link className="self-start" href={"/makePdf"}>
+          try with @makePdf
+        </Link>
       </main>
     </div>
   );

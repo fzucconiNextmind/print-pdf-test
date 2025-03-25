@@ -4,8 +4,10 @@ import PdfPreview from "./pdfPreview.tsx/PdfPreview";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "svg2pdf.js";
+import { applyPlugin } from "jspdf-autotable";
 
 const JsPdfHtml2Canvas = () => {
+  applyPlugin(jsPDF);
   const [doc, setDoc] = useState<jsPDF>(
     new jsPDF({
       orientation: "p",
@@ -55,8 +57,10 @@ const JsPdfHtml2Canvas = () => {
     const pdfTypeElementsArray = Array.from(pdfTypeElements);
 
     console.log("pdfTypeElementsArray", pdfTypeElementsArray);
-
     const element = document.getElementById(contentSelector) as HTMLElement;
+    (doc as any)?.autoTable({
+      body: [{ html: element }],
+    });
     // Get the current page height in mm
     const pageHeight = doc?.internal.pageSize.height;
     // Get the current page number
@@ -71,26 +75,45 @@ const JsPdfHtml2Canvas = () => {
       ...tocEntriesRef.current,
       { title: contentSelector, page: pageIndex },
     ]);
-
     doc?.html(element, {
       callback: async function (pdf) {
-        // await addSection("report-grafici", "#report-grafici");
+        // Get the final Y position after HTML content
+        const finalY = (pdf as any).lastAutoTable?.finalY; // Add default offset if lastAutoTable is not available
+
         const highchartsSvgs = document.querySelectorAll(
           'svg[class^="highcharts"]'
         );
         const highchartsSvgsArray = Array.from(highchartsSvgs);
-        doc?.addPage();
-        await doc?.svg(highchartsSvgsArray[0], {
-          x: 0,
-          y: 0,
-          width: 100,
-          height: 100,
-        });
+
+        // Get current page height and remaining space
+        const pageHeight = pdf.internal.pageSize.height;
+        const remainingSpace = pageHeight - finalY;
+        debugger;
+        // Check if there's enough space on current page
+        if (remainingSpace >= 100) {
+          // Add SVG right after the HTML content
+          await pdf.svg(highchartsSvgsArray[0], {
+            x: 0,
+            y: finalY + 10, // Add small gap
+            width: 100,
+            height: 100,
+          });
+        } else {
+          // Add new page if not enough space
+          pdf.addPage();
+          await pdf.svg(highchartsSvgsArray[0], {
+            x: 0,
+            y: 10, // Small top margin on new page
+            width: 100,
+            height: 100,
+          });
+        }
+
         const charts = document.getElementsByClassName("highcharts-container");
         Array.from(charts).forEach((chart) => {
           chart.removeAttribute("style");
         });
-        window.open(doc?.output("bloburl"));
+        window.open(pdf.output("bloburl"));
       },
       x: 0,
       y: startY,
