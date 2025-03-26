@@ -222,6 +222,13 @@ const PdfPreview = ({ generatePdfHandler }: PdfPreviewProps) => {
                   charts, line charts, and bar charts. Each visualization offers
                   unique insights into the underlying data patterns and trends.
                 </p>
+                <HighchartsReact
+                  highcharts={Highcharts}
+                  options={options}
+                  containerProps={{
+                    className: "w-full",
+                  }}
+                />
               </div>
 
               {/*   <div  className="grid grid-cols-2 ">
@@ -233,7 +240,7 @@ const PdfPreview = ({ generatePdfHandler }: PdfPreviewProps) => {
               </div> */}
 
               <div
-                id="report-grafici "
+                id="report-grafici"
                 className="grid grid-cols-2 px-6 pdf-type-image"
               >
                 <HighchartsReact

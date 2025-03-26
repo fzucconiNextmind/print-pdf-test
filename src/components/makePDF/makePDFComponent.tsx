@@ -1,56 +1,68 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PdfPreview from "../pdfPreview.tsx/PdfPreview";
 import pdfMake from "pdfmake/build/pdfmake";
 import htmlToPdfMake from "html-to-pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions, Content } from "pdfmake/interfaces";
 import blobStream from "blob-stream";
+import { MorningstarLogo } from "@/assets/Morningstar";
 
 const MakePDFComponent = () => {
-  const [pdfUrl, setPdfUrl] = useState<string>();
-  const [tocEntries, setTocEntries] = useState<
-    { title: string; page: number }[]
-  >([]);
-  const tocEntriesRef = useRef<{ title: string; page: number }[]>([]);
-
-  useEffect(() => {
-    tocEntriesRef.current = tocEntries;
-  }, [tocEntries]);
-
   const generatePdfHandler = () => {
     // Initialize pdfMake with fonts
     (pdfMake as any).vfs = pdfFonts.vfs;
 
     const html = document.getElementById("introduzione");
-    const highchartsSvgs = document.querySelectorAll(
-      'svg[class^="highcharts"]'
-    );
-    const highchartsSvgsArray = Array.from(highchartsSvgs);
+    const reportGrafici = document.getElementById("report-grafici");
     const converted = htmlToPdfMake(html?.outerHTML!);
+    const convertedReportGrafici = htmlToPdfMake(reportGrafici?.innerHTML!);
 
-    const mappedConverted = (converted as any[]).map((a: any) => {
-      a.stack[0].tocItem = true;
-      return { ...a, pageBreak: "after" };
-    });
+    //fix svg width
+    const fixSVGWidth = (nodes: any) => {
+      nodes?.stack?.map((node: any) => {
+        if (node.svg) {
+          node.width = 150;
+          // node.heigth = 0;
+        }
+        fixSVGWidth(node);
+      });
+    };
 
-    console.log(mappedConverted);
+    const mapContent = (content: any) => {
+      const mappedContent = (content as any[]).map((node: any, id: number) => {
+        node.stack[0].tocItem = true;
+        fixSVGWidth(node);
+        return content.length === 1
+          ? { ...node, pageBreak: "after" }
+          : { ...node };
+      });
 
-    const convertedCharts = highchartsSvgsArray.map((svg) => ({
-      svg: svg.outerHTML,
-      width: 150,
-    }));
+      if (content.length === 1) {
+        return mappedContent[0];
+      } else {
+        return {
+          width: "*",
+          alignment: "justify",
+          columns: [...mappedContent],
+        };
+      }
+    };
+
+    const mappedConverted = mapContent(converted);
+    const mappedconvertedReportGrafici = mapContent(convertedReportGrafici);
 
     const charsContent = [
       {
-        text: "Chars Report",
-        style: "header",
-        tocItem: true,
-      },
-      {
-        alignment: "justify",
-        columns: [...convertedCharts],
-        tocItem: true,
+        stack: [
+          {
+            text: "Report Grafici",
+            style: "header",
+            alignment: "center",
+            tocItem: true,
+          },
+          mappedconvertedReportGrafici,
+        ],
       },
     ];
 
@@ -62,18 +74,92 @@ const MakePDFComponent = () => {
         },
         pageBreak: "after",
       },
+
       {
         text: "This is a header",
         style: "header",
-        tocItem: true,
         pageBreak: "after",
+        tocItem: true,
       },
+
       // Main content
-      ...mappedConverted,
-      ...charsContent,
+      mappedConverted,
+      charsContent,
     ];
 
     const docDefinition: TDocumentDefinitions = {
+      pageMargins: [40, 60, 40, 100],
+      header: function (currentPage, pageCount, pageSize) {
+        // you can apply any logic and return any valid pdfmake element
+
+        return [
+          {
+            text: `Report as of ${new Date().toLocaleDateString()}`,
+            alignment: "left",
+            margin: [40, 10, 0, 0],
+            style: "pageHeader",
+          },
+
+          {
+            canvas: [
+              {
+                type: "line",
+                x1: 40,
+                y1: 10,
+                x2: pageSize.width - 40,
+                y2: 10,
+                lineWidth: 0.5,
+              },
+            ],
+          },
+        ];
+      },
+      footer: function (currentPage, pageCount, pageSize) {
+        return [
+          {
+            canvas: [
+              {
+                type: "line",
+                x1: 40,
+                y1: 10,
+                x2: pageSize.width - 40,
+                y2: 10,
+                lineWidth: 0.5,
+              },
+            ],
+          },
+          {
+            height: 200,
+            margin: [40, 10, 40, 10],
+            fontSize: 5,
+            columnGap: 8,
+            columns: [
+              {
+                text: "Morningstar UK Limited. All Rights Reserved. Legal Information: The information, data, analyses and opinions contained herein (1) include the confidential and proprietary information of Morningstar UK Limited (2) may not be copied or redistributed, (3) do not constitute investment advice offered by Morningstar UK Limited, (4) are provided solely for informational purposes (5) are not warranted to be correct, complete, accurate or timely and the date of data published may vary from fund to fund . Morningstar UK Limited shall not be responsible for any trading decisions, damages or other losses resulting from, or related to, this information, data, analyses or opinions or their use and that the information must not be relied upon by you the user without appropriate verification. Morningstar UK Limited informs you as follows: (i) no investment decision should be made in relation to any of the information provided other than on the advice of a professional financial advisor; (ii) past performance is no guarantee of future results; and (iii) the value and income derived from investments can go down as well as up.",
+                alignment: "justify",
+                width: "80%",
+              },
+              {
+                width: "20%",
+                stack: [
+                  {
+                    svg: MorningstarLogo,
+                    width: 100,
+                    height: 0,
+                  },
+                  {
+                    text: `${currentPage}`,
+                    alignment: "right",
+                    fontSize: 8,
+                    margin: [0, 10, 0, 0],
+                    color: "#ADADAD",
+                  },
+                ],
+              },
+            ],
+          },
+        ];
+      },
       content: content as Content[],
       styles: {
         header: {
@@ -81,12 +167,10 @@ const MakePDFComponent = () => {
           bold: true,
           margin: [0, 0, 0, 10],
         },
-      },
-      footer: function (currentPage, pageCount) {
-        return {
-          text: currentPage.toString() + " of " + pageCount,
-          alignment: "center",
-        };
+        pageHeader: {
+          fontSize: 10,
+          color: "#DEDEDE",
+        },
       },
     };
 
@@ -104,7 +188,7 @@ const MakePDFComponent = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h4 className="text-xl">@pdfMake Generator</h4>
+      <h4 className="text-xl">@pdfmake Generator</h4>
       <div className="flex flex-col gap-2">
         <PdfPreview generatePdfHandler={generatePdfHandler} />
       </div>

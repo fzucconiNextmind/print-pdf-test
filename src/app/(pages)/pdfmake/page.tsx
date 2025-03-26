@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import JsPdfHtml2Canvas from "@/components/JsPdfHtml2Canvas";
 import MakePDFComponent from "@/components/makePDF/makePDFComponent";
 
 export default function MakePdf() {
