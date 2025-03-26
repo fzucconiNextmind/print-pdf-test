@@ -7,6 +7,15 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions, Content } from "pdfmake/interfaces";
 import blobStream from "blob-stream";
 import { MorningstarLogo } from "@/assets/Morningstar";
+import {
+  //import default style
+  formStyles,
+  //import layout helpers
+  Section,
+  Row,
+  //import element helpers
+  TextInput,
+} from "pdfmake-form-elements";
 
 const MakePDFComponent = () => {
   const generatePdfHandler = () => {
@@ -68,6 +77,32 @@ const MakePDFComponent = () => {
 
     // Create content array with dynamic index
     const content = [
+      {
+        stack: [
+          {
+            text: "Sample",
+            style: "header",
+            margin: [0, 100, 0, 0],
+          },
+          {
+            text: new Date().toLocaleDateString(),
+            fontSize: 12,
+            color: "#ADADAD",
+            margin: [0, 10, 0, 50],
+          },
+        ],
+      },
+      {
+        pageBreak: "after",
+        stack: [
+          Section([
+            Row([
+              TextInput("Prepared for", "Insert name here"),
+              TextInput("Prepared by", "Insert name here"),
+            ]),
+          ]),
+        ],
+      },
       {
         toc: {
           title: { text: "INDEX", style: "header" },
@@ -162,6 +197,7 @@ const MakePDFComponent = () => {
       },
       content: content as Content[],
       styles: {
+        ...formStyles,
         header: {
           fontSize: 20,
           bold: true,
@@ -173,7 +209,19 @@ const MakePDFComponent = () => {
         },
       },
     };
-
+    const tableLayouts = {
+      exampleLayout: {
+        hLineWidth: function (i: number, node: any) {
+          return 1;
+        },
+        vLineWidth: function (i: number) {
+          return 0;
+        },
+        hLineColor: function (i: number) {
+          return "red";
+        },
+      },
+    };
     // Use client-side PDF generation
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
 
