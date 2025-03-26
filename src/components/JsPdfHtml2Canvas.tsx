@@ -88,7 +88,6 @@ const JsPdfHtml2Canvas = () => {
         // Get current page height and remaining space
         const pageHeight = pdf.internal.pageSize.height;
         const remainingSpace = pageHeight - finalY;
-        debugger;
         // Check if there's enough space on current page
         if (remainingSpace >= 100) {
           // Add SVG right after the HTML content
