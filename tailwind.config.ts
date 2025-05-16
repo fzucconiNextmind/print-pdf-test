@@ -14,6 +14,14 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }: any) {
+      addUtilities({
+        ".text-shadow-green-glow": {
+          textShadow: "0 0 8px #22ff55, 0 0 16px #22ff55, 0 0 24px #22ff55",
+        },
+      });
+    },
+  ],
 };
 export default config;
